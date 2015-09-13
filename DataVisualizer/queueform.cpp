@@ -23,9 +23,12 @@ QueueForm::QueueForm(QWidget *parent) :
 
 QueueForm::~QueueForm()
 {
-    for (auto it=lmap.begin(); it!=lmap.end(); it++) {
+    std::map <int, QLineEdit *>::iterator it;
+
+    for (it=lmap.begin(); it!=lmap.end(); it++) {
         delete it->second;
     }
+
     if (top_label != NULL) {
         delete top_label;
     }

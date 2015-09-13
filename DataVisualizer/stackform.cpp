@@ -19,14 +19,21 @@ StackForm::StackForm(QWidget *parent) :
     ledit_coordinates[1]=100;
     ledit_coordinates[2]=31;
     ledit_coordinates[3]=21;
+
+    top_label = NULL;
 }
 
 StackForm::~StackForm()
 {
-    for (auto it=lmap.begin(); it!=lmap.end(); it++) {
+    std::map <int, QLineEdit *>::iterator it;
+
+    for (it=lmap.begin(); it!=lmap.end(); it++) {
         delete it->second;
     }
-    delete top_label;
+
+    if (top_label != NULL) {
+        delete top_label;
+    }
 
     delete ui;
 }
@@ -36,12 +43,37 @@ void StackForm::on_pushButton_clicked()
     QString val;
     QRect rect;
     QFont font;
+    std::map <int, QLineEdit *>::iterator it;
 
-    val = ui->lineEdit->text();
+    int count=0;
+    for (it=lmap.begin(); it!=lmap.end(); it++) {
+        QLineEdit *ledit = it->second;
+        ui->gridLayout_3->removeWidget(ledit);
+        ledit->hide();
+    }
 
-   // QLabel *top_label = new QLabel(this);
-    rect.setRect(70,110,31,21);
-    font.bold();
+    it = lmap.find(num_of_entries);
+    if (it != lmap.end()) {
+        QLineEdit *ledit = it->second;
+        ui->gridLayout_3->removeWidget(ledit);
+        lmap.erase(it);
+        delete ledit;
+    }
+
+    num_of_entries--;
+    if (!num_of_entries) {
+        ui->gridLayout_3->removeWidget(top_label);
+        top_label->hide();
+        delete top_label;
+    }
+
+    std::map<int, QLineEdit *>::reverse_iterator rit;
+    count = 0;
+    for (rit=lmap.rbegin(); rit!=lmap.rend(); rit++) {
+        QLineEdit *ledit = rit->second;
+        ui->gridLayout_3->addWidget(ledit, count++, 1, 1, 1, 0);
+        ledit->show();
+    }
 }
 
 void StackForm::on_pushButton_2_clicked()
@@ -52,6 +84,11 @@ void StackForm::on_pushButton_2_clicked()
     QFont font;
 
     val = ui->lineEdit->text();
+    if (val == "") {
+        return; //Do Nothing
+    }
+
+    ui->lineEdit->setText("");
 
     rect.setRect(label_coordinates[0], label_coordinates[1],
                  label_coordinates[2], label_coordinates[3]);
@@ -89,7 +126,7 @@ void StackForm::on_pushButton_2_clicked()
         ui->gridLayout_3->addWidget(ledit, count++, 1, 1, 1, 0);
         ledit->show();
     }
-    lmap.insert(std::make_pair(num_of_entries++, l));
+    lmap.insert(std::make_pair(++num_of_entries, l));
 
     y +=30;
 
