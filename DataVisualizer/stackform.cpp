@@ -65,6 +65,7 @@ void StackForm::on_pushButton_clicked()
         ui->gridLayout_3->removeWidget(top_label);
         top_label->hide();
         delete top_label;
+        top_label = NULL;
     }
 
     std::map<int, QLineEdit *>::reverse_iterator rit;
@@ -130,4 +131,23 @@ void StackForm::on_pushButton_2_clicked()
 
     y +=30;
 
+}
+
+void StackForm::on_pushButton_3_clicked()
+{
+    std::map<int, QLineEdit *>::iterator it;
+    for (int i=1; i<(num_of_entries+1); i++) {
+        it = lmap.find(i);
+        if (it != lmap.end()) {
+            QLineEdit *ledit = it->second;
+            ui->gridLayout_3->removeWidget(ledit);
+            lmap.erase(it);
+            delete ledit;
+        }
+    }
+    num_of_entries=0;
+    ui->gridLayout_3->removeWidget(top_label);
+    top_label->hide();
+    delete top_label;
+    top_label = NULL;
 }
